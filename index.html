@@ -4,12 +4,73 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MD Forward Party</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
     <link rel="stylesheet" href="peptalks/styles.css" />
     <style>
       .spotlight {
         border-color: var(--accent);
         background: linear-gradient(150deg, var(--accent-soft), var(--surface));
       }
+
+      .brand.with-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .brand-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+
+      .project-title-link {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .project-title-link:hover {
+        color: var(--accent);
+      }
+
+      .projects-grid {
+        margin-top: 1.2rem;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .grid-heading {
+        margin-top: 1.4rem;
+        margin-bottom: 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 0.8rem 1rem;
+      }
+
+      .projects-grid > .card {
+        grid-column: span 1;
+      }
+
+      .project-preview {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        margin: 0.25rem 0 0.7rem;
+        background: var(--surface-alt);
+      }
+
+      @media (max-width: 840px) {
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
     </style>
   </head>
   <body>
@@ -17,7 +78,10 @@
     <div class="grain"></div>
     <header class="site-header">
       <div class="wrap header-row">
-        <a class="brand" href="index.html">MD Forward Party</a>
+        <a class="brand with-icon" href="index.html">
+          <img class="brand-icon" src="images/favicon.png" alt="" />
+          <span>MD Forward Party</span>
+        </a>
         <button class="menu-btn" data-menu-btn type="button">Menu</button>
         <nav class="site-nav" data-nav>
           <a class="active" href="index.html">Overview</a>
@@ -31,80 +95,78 @@
 
     <main class="wrap">
       <section class="hero">
-        <h1>PEP Talks and Community</h1>
-        <p class="muted">
-          Master project site linking to current civic technology ideas and PEP
-          Talk resources for Maryland Forward Party.
-        </p>
-        <div class="chips">
-          <span class="chip">Prioritizing Epic Problems</span>
-          <span class="chip">Community Organizing</span>
-          <span class="chip">Civic Technology</span>
-          <span class="chip">Measurable Outcomes</span>
-        </div>
-        <div class="cta-row">
-          <a class="btn fill" href="peptalks/index.html">Local PEP Talks Site</a>
-          <a class="btn" href="https://www.youtube.com/playlist?list=PLe817kHhDpUuVt0hvGrzmPZuQHDIEJgCh" target="_blank" rel="noopener noreferrer">YouTube Playlist</a>
-          <a class="btn" href="https://docs.google.com/presentation/d/1ReUq8zwjFY9XGYvoGui4mDUym4zjDDr1kSMOMMTB03U/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Overview Deck</a>
-          <a class="btn" href="https://docs.google.com/presentation/d/13OREG6owep9wmHEGpirr1Uel2mpsHbH6G_jje3WhCN0/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Podcast Deck</a>
-          <a class="btn" href="https://drive.google.com/file/d/1LuNRDrBLrNzcvCkttPSVV56pxK-YlEKy/view?usp=sharing" target="_blank" rel="noopener noreferrer">PEP PDF</a>
-          <a class="btn" href="https://discord.gg/knmuFxfehD" target="_blank" rel="noopener noreferrer">Discord</a>
-        </div>
+        <h1>Civic Tech Arm of the MD Forward Party</h1>
       </section>
 
-      <section class="grid">
-        <article class="card full">
-          <h2>Project Ideas</h2>
-          <p>
-            Active civic technology concepts and implementation references.
-          </p>
+      <h2 class="grid-heading">Active Projects</h2>
+      <section class="projects-grid">
+        <article class="card">
+          <h2>PEP Talks</h2>
+          <p>PEP strategy resources, media, and community channels.</p>
           <div class="cta-row">
-            <a class="btn fill" href="https://codecollective.us/calendar.html?city=baltimore" target="_blank" rel="noopener noreferrer">Maryland Techonomics Event Calendar</a>
-            <a class="btn" href="https://codecollective.us/mdbills.html" target="_blank" rel="noopener noreferrer">Maryland Legislation Analyzer</a>
+            <a class="btn fill" href="peptalks/index.html">Local PEP Talks Site</a>
+            <a class="btn" href="https://www.youtube.com/playlist?list=PLe817kHhDpUuVt0hvGrzmPZuQHDIEJgCh" target="_blank" rel="noopener noreferrer">YouTube Playlist</a>
+            <a class="btn" href="https://docs.google.com/presentation/d/1ReUq8zwjFY9XGYvoGui4mDUym4zjDDr1kSMOMMTB03U/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Overview Deck</a>
+            <a class="btn" href="https://docs.google.com/presentation/d/13OREG6owep9wmHEGpirr1Uel2mpsHbH6G_jje3WhCN0/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Podcast Deck</a>
+            <a class="btn" href="https://drive.google.com/file/d/1LuNRDrBLrNzcvCkttPSVV56pxK-YlEKy/view?usp=sharing" target="_blank" rel="noopener noreferrer">PEP PDF</a>
+            <!-- <a class="btn" href="https://discord.gg/knmuFxfehD" target="_blank" rel="noopener noreferrer">Discord</a> -->
+            <a class="btn" href="https://miro.com/app/board/uXjVNVqvYdk=/?share_link_id=442935498077" target="_blank" rel="noopener noreferrer">UI Prototype</a>
           </div>
         </article>
 
         <article class="card">
-          <h3>1. Prioritized Problems Mobile App</h3>
-          <p>Mobile-first ranking of top community problems.</p>
-          <a class="btn" href="https://miro.com/app/board/uXjVNVqvYdk=/?share_link_id=442935498077" target="_blank" rel="noopener noreferrer">UI Prototype</a>
+            <h2><a class="project-title-link" href="monthly-dues-ballot-system/index.html">Monthly Dues Ballot System</a></h2>
+            <img class="project-preview" src="images/previews/monthly-dues-ballot-system.png" alt="Preview of Monthly Dues Ballot System" loading="lazy" />
+            <p>Transparent and auditable voting for voluntary dues levels.</p>
+            <a class="btn" href="https://www.notion.so/Monthly-Dues-Ballot-31e67ecedf8980219023f71f05787a98?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
         </article>
 
         <article class="card">
-          <h3>2. Monthly Dues Ballot System</h3>
-          <p>Transparent and auditable voting for voluntary dues levels.</p>
-          <a class="btn" href="https://www.notion.so/Monthly-Dues-Ballot-31e67ecedf8980219023f71f05787a98?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
+            <h2><a class="project-title-link" href="petition-signature-prefill-app/index.html">Petition Signature Prefill App</a></h2>
+            <img class="project-preview" src="images/previews/petition-signature-prefill-app.png" alt="Preview of Petition Signature Prefill App" loading="lazy" />
+            <p>Prefill petition forms to reduce errors and speed collection.</p>
+            <a class="btn" href="https://www.notion.so/Mobile-App-to-Prefill-Signature-Petitions-see-Andy-Ellis-31e67ecedf89806b87c8c4e5cc461194?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
         </article>
 
         <article class="card">
-          <h3>3. Petition Signature Prefill App</h3>
-          <p>Prefill petition forms to reduce errors and speed collection.</p>
-          <a class="btn" href="https://www.notion.so/Mobile-App-to-Prefill-Signature-Petitions-see-Andy-Ellis-31e67ecedf89806b87c8c4e5cc461194?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
+            <h2><a class="project-title-link" href="spreadsheet-protection-tool/index.html">Spreadsheet Protection Tool</a></h2>
+            <img class="project-preview" src="images/previews/spreadsheet-protection-tool.png" alt="Preview of Spreadsheet Protection Tool" loading="lazy" />
+            <p>Automation for preserving protected voting ranges.</p>
+            <a class="btn" href="https://www.notion.so/Write-Code-to-Copy-Protecting-Ranges-for-Voting-Spreadsheet-31e67ecedf8980879392f9505875d39f?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
         </article>
 
         <article class="card">
-          <h3>4. Spreadsheet Protection Tool</h3>
-          <p>Automation for preserving protected voting ranges.</p>
-          <a class="btn" href="https://www.notion.so/Write-Code-to-Copy-Protecting-Ranges-for-Voting-Spreadsheet-31e67ecedf8980879392f9505875d39f?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
+            <h2><a class="project-title-link" href="platform-topic-graph-database/index.html">Platform Topic Graph Database</a></h2>
+            <img class="project-preview" src="images/previews/platform-topic-graph-database.png" alt="Preview of Platform Topic Graph Database" loading="lazy" />
+            <p>Graph model for policy topic relationships and clustering.</p>
+            <a class="btn" href="https://www.notion.so/Platform-Topic-Graph-Database-31e67ecedf89805183cde8dfc34a5b9d?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
         </article>
+      </section>
 
+      <h2 class="grid-heading">Community Projects</h2>
+      <section class="projects-grid">
         <article class="card">
-          <h3>5. Platform Topic Graph Database</h3>
-          <p>Graph model for policy topic relationships and clustering.</p>
-          <a class="btn" href="https://www.notion.so/Platform-Topic-Graph-Database-31e67ecedf89805183cde8dfc34a5b9d?pvs=21" target="_blank" rel="noopener noreferrer">Reference</a>
-        </article>
-
-        <article class="card">
-          <h3>6. Maryland Bills Transparency Tool</h3>
-          <p>Public-facing bill explorer and legislative context tools.</p>
+          <h2>Maryland Techonomics Event Calendar</h2>
+          <p>Events, data tools, and links for statewide civic coordination.</p>
           <div class="cta-row">
+            <a class="btn fill" href="https://codecollective.us/calendar.html?city=baltimore" target="_blank" rel="noopener noreferrer">Maryland Techonomics Event Calendar</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Maryland Legislation Analyzer</h2>
+          <p>Events, data tools, and links for statewide civic coordination.</p>
+          <img class="project-preview" src="images/previews/maryland-bills-transparency-tool.png" alt="Preview of Maryland Bills Transparency Tool" loading="lazy" />
+          <div class="cta-row">
+            <a class="btn fill" href="https://codecollective.us/mdbills.html" target="_blank" rel="noopener noreferrer">Maryland Legislation Analyzer</a>
             <a class="btn" href="https://codecollective.us/mdbills.html" target="_blank" rel="noopener noreferrer">Example Prototype</a>
             <a class="btn" href="https://mgaleg.maryland.gov/2026rs/misc/billsmasterlist/legislation.json" target="_blank" rel="noopener noreferrer">Legislative Data</a>
           </div>
         </article>
 
         <article class="card spotlight">
-          <h3>7. Civic Data Visualization Experiments</h3>
+          <h2><a class="project-title-link" href="civic-data-visualization-experiments/index.html">Civic Data Visualization Experiments</a></h2>
+          <img class="project-preview" src="images/previews/civic-data-visualization-experiments.png" alt="Preview of Civic Data Visualization Experiments" loading="lazy" />
           <p>Interactive legal and legislative explanation visuals.</p>
           <a class="btn" href="https://www.qfathom.com/assets/html/TrumpIndictmentsDev2.html" target="_blank" rel="noopener noreferrer">Example</a>
         </article>
@@ -114,6 +176,7 @@
     <footer>
       <div class="wrap">Contact: maryland@marylandforwardparty.com</div>
     </footer>
+    <script src="scripts/link_preview_hover.js"></script>
     <script src="peptalks/script.js"></script>
   </body>
 </html>
