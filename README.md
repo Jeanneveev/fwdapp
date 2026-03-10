@@ -159,11 +159,11 @@ https://www.democracythinking.com/ammi
 
 Participants in the discussion:
 
-- Julian Coy – julian@codecollective.us
-- Matthew Beyers – beyersfwd@gmail.com
-- Adam Wise – adam.md.fwd@gmail.com
-- Brandon Barrett – brandonfwdmd@gmail.com
-- Pete – pete.md.fwd@gmail.com
+- Julian Coy 
+- Matthew Beyers
+- Adam Wise
+- Brandon Barrett 
+- Pete 
 
 Maryland Forward Party Contact:
 maryland@marylandforwardparty.com
