@@ -1,4 +1,6 @@
-# Maryland Forward Party – Civic Technology Ideas
+# Code Forward
+
+## Civic Tech Arm of the MD Forward Party
 
 ![Background image](images/background.avif)
 
@@ -170,6 +172,10 @@ https://docs.google.com/presentation/d/13OREG6owep9wmHEGpirr1Uel2mpsHbH6G_jje3Wh
 Downloadable PDF document related to PEP Talks:  
 https://drive.google.com/file/d/1LuNRDrBLrNzcvCkttPSVV56pxK-YlEKy/view?usp=sharing
 
+**AMMI**  
+Additional resource:  
+https://www.democracythinking.com/ammi
+
 ## Additional Reading
 https://www.democracythinking.com/ammi
 
@@ -192,10 +198,13 @@ maryland@marylandforwardparty.com
 
 # Contributing
 
-If you are interested in working on one of these ideas:
+Interested in contributing? Please see our [Contributing Guide](contributing_guide.md) for detailed instructions on how to fork, clone, and submit pull requests.
 
-1. Open an issue describing the project you want to work on
-2. Propose architecture or tools
-3. Submit pull requests for prototypes
+In brief:
+
+1. Fork the repository
+2. Create a branch for your work
+3. Make your changes
+4. Submit a pull request
 
 These projects are early ideas intended to inspire civic technology development in Maryland.
