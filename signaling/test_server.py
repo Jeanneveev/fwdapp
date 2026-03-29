@@ -109,3 +109,29 @@ async def test_advance_speaker_guard_double_call():
     # Should be a no-op
     await srv._advance_speaker("r3")
     assert room.phase == "open"
+
+@pytest.mark.asyncio
+async def test_handle_leave_promotes_chair():
+    import server as srv
+    srv.rooms.clear(); srv.connections.clear(); srv._timer_tasks.clear()
+    room = Room(room_id="r4")
+    room.members += [
+        Member(id="chair", name="Chair", is_chair=True),
+        Member(id="u2", name="Bob"),
+    ]
+    srv.rooms["r4"] = room
+    srv.connections["r4"] = {}
+    await srv._handle_leave("r4", "chair")
+    assert room.members[0].id == "u2"
+    assert room.members[0].is_chair is True
+
+@pytest.mark.asyncio
+async def test_handle_leave_last_member_destroys_room():
+    import server as srv
+    srv.rooms.clear(); srv.connections.clear()
+    room = Room(room_id="r5")
+    room.members.append(Member(id="u1", name="Alice", is_chair=True))
+    srv.rooms["r5"] = room
+    srv.connections["r5"] = {}
+    await srv._handle_leave("r5", "u1")
+    assert "r5" not in srv.rooms

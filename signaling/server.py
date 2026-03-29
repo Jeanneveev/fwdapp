@@ -222,3 +222,225 @@ async def _close_vote(room_id: str) -> None:
         room.phase  = "open"
         room.motion = None
         await _broadcast_state(room_id)
+
+# ── Leave ─────────────────────────────────────────────────────────────────────
+async def _handle_leave(room_id: str, member_id: str) -> None:
+    room = rooms.get(room_id)
+    if not room:
+        return
+    connections.get(room_id, {}).pop(member_id, None)
+    was_chair   = _is_chair(room, member_id)
+    was_speaker = room.current_speaker == member_id
+    room.members       = [m for m in room.members       if m.id != member_id]
+    room.speaker_queue = [x for x in room.speaker_queue if x != member_id]
+
+    if not room.members:
+        _cancel_task(_timer_tasks,  room_id)
+        _cancel_task(_motion_tasks, room_id)
+        rooms.pop(room_id, None)
+        connections.pop(room_id, None)
+        return
+
+    if was_chair:
+        room.members[0].is_chair = True
+
+    if was_speaker:
+        room.current_speaker = None  # clear before advance to prevent double-call
+        _cancel_task(_timer_tasks, room_id)
+        if room.speaker_queue:
+            nxt = room.speaker_queue.pop(0)
+            room.current_speaker  = nxt
+            room.timer_remaining  = room.speaker_time
+            room.phase            = "floor_held"
+            _timer_tasks[room_id] = asyncio.create_task(_run_speaker_timer(room_id))
+        elif room.phase == "floor_held":
+            room.phase = "open"
+
+    if room.phase == "voting" and was_chair:
+        asyncio.create_task(_close_vote(room_id))
+        return
+
+    await _broadcast_state(room_id)
+
+# ── Message handler ───────────────────────────────────────────────────────────
+async def _handle_message(room_id: str, member_id: str,
+                           ws: WebSocket, msg: dict) -> None:
+    room = rooms.get(room_id)
+    if not room:
+        return
+    mtype = msg.get("type")
+
+    # WebRTC relay
+    if mtype in ("offer", "answer", "ice"):
+        to = msg.get("to")
+        target = connections.get(room_id, {}).get(to)
+        if target:
+            await target.send_text(json.dumps({
+                "type": "signal", "from": member_id, "signal_type": mtype,
+                **{k: v for k, v in msg.items() if k not in ("type", "to")},
+            }))
+        return
+
+    if mtype == "raise_hand":
+        if room.phase not in ("open", "floor_held", "seconded"):
+            return await _send_error(ws, "cannot raise hand in current phase")
+        m = _get_member(room, member_id)
+        if m and not m.hand_raised and member_id not in room.speaker_queue:
+            m.hand_raised = True
+            room.speaker_queue.append(member_id)
+            if room.phase == "open" and room.current_speaker is None:
+                nxt = room.speaker_queue.pop(0)
+                room.current_speaker  = nxt
+                room.timer_remaining  = room.speaker_time
+                room.phase            = "floor_held"
+                _timer_tasks[room_id] = asyncio.create_task(_run_speaker_timer(room_id))
+            await _broadcast_state(room_id)
+        return
+
+    if mtype == "lower_hand":
+        if room.phase not in ("open", "floor_held", "seconded"):
+            return await _send_error(ws, "cannot lower hand in current phase")
+        m = _get_member(room, member_id)
+        if m:
+            m.hand_raised = False
+            room.speaker_queue = [x for x in room.speaker_queue if x != member_id]
+            await _broadcast_state(room_id)
+        return
+
+    if mtype == "yield_floor":
+        if room.phase != "floor_held" or room.current_speaker != member_id:
+            return await _send_error(ws, "not your floor to yield")
+        await _advance_speaker(room_id)
+        return
+
+    if mtype == "make_motion":
+        if room.phase not in ("open", "floor_held", "seconded"):
+            return await _send_error(ws, "cannot make motion in current phase")
+        # Block making a new motion while a motion is already seconded and under debate
+        if room.phase == "seconded":
+            return await _send_error(ws, "a motion is already under debate; withdraw it first")
+        text = (msg.get("text") or "").strip()
+        if not text:
+            return await _send_error(ws, "motion text required")
+        _cancel_task(_timer_tasks, room_id)
+        # Also cancel any pending motion timeout (e.g., lingering _motion_pending_timeout)
+        _cancel_task(_motion_tasks, room_id)
+        room._prev_phase   = room.phase
+        room._prev_speaker = room.current_speaker
+        room._prev_timer   = room.timer_remaining
+        room.phase  = "motion_pending"
+        room.motion = Motion(text=text, moved_by=member_id)
+        _motion_tasks[room_id] = asyncio.create_task(_motion_pending_timeout(room_id))
+        await _broadcast_state(room_id)
+        return
+
+    if mtype == "second_motion":
+        if room.phase != "motion_pending":
+            return await _send_error(ws, "no motion pending")
+        if not room.motion or room.motion.moved_by == member_id:
+            return await _send_error(ws, "mover cannot second their own motion")
+        _cancel_task(_motion_tasks, room_id)
+        room.motion.seconded_by = member_id
+        room.phase = "seconded"
+        _motion_tasks[room_id] = asyncio.create_task(_seconded_timeout(room_id))
+        await _broadcast_state(room_id)
+        return
+
+    if mtype == "withdraw_motion":
+        if room.phase not in ("motion_pending", "seconded"):
+            return await _send_error(ws, "no active motion to withdraw")
+        if not room.motion or room.motion.moved_by != member_id:
+            return await _send_error(ws, "only the mover can withdraw")
+        await _restore_prev_phase(room_id)
+        return
+
+    if mtype == "call_vote":
+        if not _is_chair(room, member_id):
+            return await _send_error(ws, "only the chair can call a vote")
+        if room.phase != "seconded":
+            return await _send_error(ws, "can only call vote in seconded phase")
+        _cancel_task(_motion_tasks, room_id)
+        room.phase = "voting"
+        await _broadcast_state(room_id)
+        return
+
+    if mtype == "cast_vote":
+        if room.phase != "voting" or not room.motion:
+            return await _send_error(ws, "not in voting phase")
+        if member_id in room.motion.member_votes:
+            return await _send_error(ws, "already voted")
+        vote = msg.get("vote")
+        if vote not in ("yea", "nay", "abstain"):
+            return await _send_error(ws, "vote must be yea, nay, or abstain")
+        room.motion.member_votes[member_id] = vote
+        room.motion.votes[vote] += 1
+        if len(room.motion.member_votes) >= len(room.members):
+            asyncio.create_task(_close_vote(room_id))
+        else:
+            await _broadcast_state(room_id)
+        return
+
+    if mtype == "set_speaker_time":
+        if not _is_chair(room, member_id):
+            return await _send_error(ws, "only the chair can set speaker time")
+        if room.phase != "open":
+            return await _send_error(ws, "can only set speaker time in open phase")
+        if room.current_speaker is not None:
+            return await _send_error(ws, "cannot change speaker time while someone has the floor")
+        secs = msg.get("seconds")
+        if not isinstance(secs, int) or not (10 <= secs <= 600):
+            return await _send_error(ws, "speaker_time must be 10–600 seconds")
+        room.speaker_time = secs
+        await _broadcast_state(room_id)
+        return
+
+    if mtype == "leave":
+        await _handle_leave(room_id, member_id)
+        await ws.close()
+        return
+
+# ── WebSocket endpoint ────────────────────────────────────────────────────────
+@app.websocket("/ws/{room_id}")
+async def ws_endpoint(websocket: WebSocket, room_id: str) -> None:
+    await websocket.accept()
+    member_id: Optional[str] = None
+    try:
+        raw = await websocket.receive_text()
+        msg = json.loads(raw)
+        if msg.get("type") != "join":
+            await _send_error(websocket, "first message must be join")
+            return await websocket.close()
+        try:
+            claims = _validate_jwt(msg["token"])
+        except Exception:
+            await _send_error(websocket, "unauthorized")
+            return await websocket.close()
+
+        member_id = claims["sub"]
+        name      = claims.get("name") or member_id
+
+        if room_id not in rooms:
+            rooms[room_id]       = Room(room_id=room_id)
+            connections[room_id] = {}
+
+        room     = rooms[room_id]
+        is_chair = len(room.members) == 0
+        room.members.append(Member(id=member_id, name=name, is_chair=is_chair))
+        connections[room_id][member_id] = websocket
+
+        await websocket.send_text(json.dumps({"type": "welcome", "self_id": member_id}))
+        await _broadcast_state(room_id)
+
+        async for raw in websocket.iter_text():
+            try:
+                await _handle_message(room_id, member_id, websocket, json.loads(raw))
+            except Exception as e:
+                await _send_error(websocket, str(e))
+
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        pass
+    finally:
+        if member_id:
+            await _handle_leave(room_id, member_id)
