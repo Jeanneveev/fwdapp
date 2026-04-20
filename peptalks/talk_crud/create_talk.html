@@ -1,33 +1,66 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
     <head>
-        <meta charset='UTF-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="create_talk.css">
+        <title>Create PEP Talk</title>
     </head>
     <body>
         <aside>
-            <div class="image"></div>
-            <div class="link_btn_container"></div>
+            <div class="image_container" id="image_container">
+                <h2>Image</h2>
+                <img src="" alt="" id="image" />
+                <input type="file" name="image_file_input" id="image_file_input" />
+            </div>
+            <div class="link_btn_container">
+                <button id="delete_talk">Delete</button>
+                <button id="copy_talk">Copy</button>
+                <button id="share_talk">Share</button>
+            </div>
         </aside>
         <main>
-            <form class="talk_info_form" action="">
-                <input type="text" name="title" id="title" />
-                <input type="text" name="description" id="description" />
-                <input type="submit" value="Save" />
-            </form>
-            <form class="co_hosts_form" action="">
-                <input type="text" name="co_hosts" id="co_hosts" />
-                <input type="submit" value="Send" />
-            </form>
-            <div class="attendee_container">
-                <div class="attendant">
-                    <p class="name">First Last Name</p>
-                    <p class="address">address@email.com</p>
-                    <form class="attendant_form" action="">
-
-                    </form>
-                </div>
-            </div>
+            <!-- Talk Info -->
+            <section>
+                <h2>Pep Talk Title & Description</h2>
+                <form class="talk_info_form" id="talk_info_form"  action="">
+                    <input type="text" name="title" id="title" placeholder="PEP Talk Title" />
+                    <input type="text" name="description" id="description" placeholder="Theme or Description" />
+                    <input type="submit" id="save_talk_info" value="Save" />
+                </form>
+            </section>
+            <!-- Co-hosts Form -->
+            <section>
+                <form class="co_hosts_form" id="co_hosts_form" action="">
+                    <input type="text" name="co_hosts" id="co_hosts" />
+                    <input type="submit" id="add_co_hosts" value="Send Message" />
+                </form>
+            </section>
+            <!-- Attendee Table -->
+            <section>
+                <table id="attendees_table">
+                    <thead>
+                        <tr>
+                            <th>Name / Email</th>
+                            <th>Role</th>
+                            <th></th>   <!-- Edit -->
+                            <th></th>   <!-- Message -->
+                            <th></th>   <!-- Delete -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>First Last Name</td>
+                            <td>address@email.com</td>
+                            <td>Edit</td>
+                            <td>Message</td>
+                            <td>Delete</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <!-- Popups -->
+            <div class="popup" id="url_copied">Copied URL!</div>
         </main>
     </body>
 </html>
