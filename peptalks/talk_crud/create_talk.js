@@ -15,12 +15,15 @@ const get_all_attendees = () => {
 const display_attendees = () => {
     const attendees = get_all_attendees();
     attendees.forEach(attendee => {
-        const table = document.getElementById("attendees_table");
+        const table = document.getElementById("attendee_table");
         const row = document.createElement("tr");
 
         // Info
         const info_td = document.createElement("td");
-        const info = `${attendee.first_name} ${attendee.last_name}\n${attendee.email}`;
+        const info = `
+            ${attendee.first_name} ${attendee.last_name}<br />
+            ${attendee.email}
+        `;
         info_td.appendChild(info);
 
         // Role dropdown
@@ -72,16 +75,19 @@ const img_container = document.getElementById("image_container");
 const img = document.getElementById("image");
 const img_file_input = document.getElementById("image_file_input");
 
-img_container.addEventListener("click", () => img_file_input.click());
+img_container.addEventListener("click", () => {
+    console.log("Image container clicked");
+    img_file_input.click();
+});
 img_file_input.addEventListener("change", (evt) => {
     try {
         const file = evt.target.files[0];
+        if (file) {
+            // TODO: Format and display image
+        }
     } catch (error) {
-        return
-    }
-
-    if (file) {
-        // TODO: Format and display image
+        console.error("Error uploading image:", error);
+        return;
     }
 });
 
@@ -103,7 +109,10 @@ copy_talk_btn.addEventListener("click", () => {
 /* Save Talk Info (Title and description) */
 const save_talk_btn = document.getElementById("save_talk_info");
 
-save_talk_btn.addEventListener("click", () => {
+save_talk_btn.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    console.log("Save talk button pushed");
+
     const form = document.getElementById("talk_info_form");
     const form_data = new FormData(form);
 
@@ -114,11 +123,20 @@ save_talk_btn.addEventListener("click", () => {
 /* Add Co-Hosts */
 add_co_host_btn = document.getElementById("add_co_host");
 
-add_co_host_btn.addEventListener("click", () => {
+add_co_host_btn.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    console.log("Add co-host(s) button pushed");
+
     const form = document.getElementById("co_host_form");
     const form_data = new FormData(form);
     const email_str = form_data.get("co_host");
-    const emails = email_str.replaceAll(" ", "").split(",");
+    let emails = [];
+    try {
+        emails = email_str.replaceAll(" ", "").split(",");
+    } catch (error) {
+        console.log("Can't get emails from form data");
+        return;
+    }
 
     // TODO: Send form data to backend
     console.log(`Adding co-hosts: ${emails}`);

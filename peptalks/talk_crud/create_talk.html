@@ -7,6 +7,13 @@
         <title>Create PEP Talk</title>
     </head>
     <body>
+        <!-- Popups -->
+        <div class="popup_container">
+            <div class="popup" id="url_copied">Copied URL!</div>
+            <div class="popup" id="info_updated">Updated Talk Info!</div>
+            <div class="popup" id="co_host_added">Added Co-host(s)!</div>
+        </div>
+
         <aside>
             <div class="image_container" id="image_container">
                 <h2>Image</h2>
@@ -33,36 +40,45 @@
             </section>
             <!-- Co-hosts Form -->
             <section>
+                <h2>Co-Hosts</h2>
                 <form class="co_host_form" id="co_host_form" action="">
-                    <input type="text" name="co_host" id="co_host" />
+                    <input type="text" name="co_host" id="co_host" placeholder="Co-Host 1, Co-Host 2" />
                     <input type="submit" id="add_co_host" value="Send" />
                 </form>
             </section>
             <!-- Attendee Table -->
             <section>
-                <table id="attendees_table">
-                    <thead>
+                <h2>Attendees</h2>
+                <table class="attendee_table" id="attendee_table">
+                    <!-- <thead>
                         <tr>
                             <th>Name / Email</th>
                             <th>Role</th>
-                            <th></th>   <!-- Edit -->
-                            <th></th>   <!-- Message -->
-                            <th></th>   <!-- Delete -->
+                            <th></th>   
+                            <th></th>   
+                            <th></th>
                         </tr>
-                    </thead>
+                    </thead> -->
                     <tbody>
                         <tr>
-                            <td>First Last Name</td>
-                            <td>address@email.com</td>
-                            <td>Edit</td>
-                            <td>Message</td>
-                            <td>Delete</td>
+                            <td>First Last Name<br />
+                                address@email.com</td>
+                            <td>
+                                <select name="roles">
+                                    <option value="host" selected>Host</option>
+                                    <option value="co_host">Co-Host</option>
+                                    <option value="attendee">Attendee</option>
+                                </select>
+                            </td>
+                            <td>E</td>
+                            <td>M</td>
+                            <td>D</td>
                         </tr>
                     </tbody>
                 </table>
             </section>
-            <!-- Popups -->
-            <div class="popup" id="url_copied">Copied URL!</div>
         </main>
+
+        <script src="create_talk.js"></script>
     </body>
 </html>
